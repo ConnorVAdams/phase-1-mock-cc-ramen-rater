@@ -6,9 +6,9 @@
 
 // Load details for first ramenNav in window on page load
 
-// ! Update the rating and comment for a ramen with the submit form (no persistence)
+// Update the rating and comment for a ramen with the submit form (no persistence)
 
-// ! Persist updates to a ramen's rating and comment
+// Persist updates to a ramen's rating and comment
 
 // ! Persist ramen deletions
 
@@ -23,6 +23,8 @@ const ramenWindowRest = document.querySelector('.restaurant');
 
 const ratingDisplay = document.querySelector('#rating-display');
 const commentDisplay = document.querySelector('#comment-display');
+
+const deleteBtn =  document.querySelector("#delete-button");
 
 const submitForm = document.querySelector('#new-ramen');
 
@@ -90,9 +92,20 @@ const handleUpdate = (e) => {
 
 editForm.addEventListener('submit', patchRamen)
 
-// const deleteRamen = (ramenId) => {
-//     return fetch(RAMENURL)
-// }
+const deleteRamen = () => {
+    return fetch(`${RAMENURL}/${currentlyDisplayedRamen}`, {
+        method: 'DELETE'
+    })
+    .then(resp => resp.json())
+    .then(removeFromDom())
+    .catch(error => alert('Failed to delete data.'))
+};
+
+const removeFromDom = () => {
+    document.querySelector(`[data-id='${currentlyDisplayedRamen}`).remove();
+}
+
+deleteBtn.addEventListener('click', deleteRamen)
 
 // ! Render functions
 
