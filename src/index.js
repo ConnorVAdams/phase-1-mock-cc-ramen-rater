@@ -65,6 +65,7 @@ const patchRamen = (e) => {
         body: JSON.stringify(patchData)
     })
     .then(resp => console.log(resp.json()))
+    .then(ramenObj => displayToWindow(currentlyDisplayedRamen))
     .catch(error => alert('Failed to submit data.'))
 };
 
@@ -129,7 +130,7 @@ const displayToWindowOnClick = (e) => {
     })
 };
 
-const displayToWindowOnLoad = (ramenId) => {
+const displayToWindow = (ramenId) => {
     getOneRamen(ramenId)
     .then(ramenObj => {
         ramenWindowImg.src = ramenObj.image;
@@ -142,7 +143,7 @@ const displayToWindowOnLoad = (ramenId) => {
     })
 };
 
-document.addEventListener('DOMContentLoaded', displayToWindowOnLoad(1))
+document.addEventListener('DOMContentLoaded', displayToWindow(1))
 
 // ! Submit functions
 const submitNewRamen = (e) => {
