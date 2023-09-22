@@ -2,6 +2,7 @@
 const RAMENURL = 'http://localhost:3000/ramens';
 
 const ramenNav = document.querySelector('#ramen-menu');
+const ramenNavNodeList = document.getElementsByClassName('ramen-nav')
 
 const ramenWindowImg = document.querySelector('.detail-image');
 const ramenWindowName = document.querySelector('.name');
@@ -52,8 +53,8 @@ const patchRamen = (e) => {
         },
         body: JSON.stringify(patchData)
     })
-    .then(resp => console.log(resp.json()))
-    .then(ramenObj => displayToWindow(currentlyDisplayedRamen))
+    .then(resp => resp.json())
+    .then(() => displayToWindow(currentlyDisplayedRamen))
     .catch(error => alert('Failed to submit data.'))
 };
 
@@ -82,9 +83,8 @@ const deleteRamen = () => {
     return fetch(`${RAMENURL}/${currentlyDisplayedRamen}`, {
         method: 'DELETE'
     })
-    .then(resp => resp.json())
-    .then(removeFromDom())
-    .then(displayToWindow(parseInt(currentlyDisplayedRamen + 1))) //TODO Spread into an array so next can be displayed
+    .then(() => removeFromDom())
+    .then(() => displayToWindow(Number(currentlyDisplayedRamen) + 1)) //TODO Spread into an array so next can be displayed
     .catch(error => alert('Failed to delete data.'))
 };
 
@@ -95,18 +95,18 @@ const removeFromDom = () => {
 deleteBtn.addEventListener('click', deleteRamen)
 
 // ! Render functions
-
 const renderRamenNav = (ramenObj) => {
     const navImg = document.createElement('img');
     navImg.src = ramenObj.image;
     navImg.alt = ramenObj.name;
     navImg.setAttribute('data-id', ramenObj.id);
-    navImg.addEventListener('click', displayToWindowOnClick);
+    navImg.classList.add('ramen-nav');
+    navImg.addEventListener('click', displayToWindow);
     ramenNav.appendChild(navImg);
 };
 
-const renderRamenNavs = (ramensObj) => {
-    ramensObj.forEach(ramenElement => renderRamenNav(ramenElement));
+const renderRamenNavs = (ramensArr) => {
+    ramensArr.forEach(ramenElement => renderRamenNav(ramenElement));
 };
 
 // ! Display functions
@@ -117,21 +117,9 @@ const populateNavBar = () => {
 
 document.addEventListener('DOMContentLoaded', populateNavBar)
 
-const displayToWindowOnClick = (e) => {
-    getOneRamen(e.target.dataset.id)
-    .then(ramenObj => {
-        ramenWindowImg.src = ramenObj.image;
-        ramenWindowImg.alt = ramenObj.name;
-        ramenWindowName.textContent = ramenObj.name;
-        ramenWindowRest.textContent = ramenObj.restaurant;
-        ratingDisplay.textContent = ramenObj.rating;
-        commentDisplay.textContent = ramenObj.comment;
-        currentlyDisplayedRamen = ramenObj.id;
-    })
-};
-
-const displayToWindow = (ramenId) => {
-    getOneRamen(ramenId)
+const displayToWindow = (eventOrId) => {
+    const targetedId = (typeof(eventOrId) === 'number') ? eventOrId : eventOrId.target.dataset.id
+    getOneRamen(targetedId)
     .then(ramenObj => {
         ramenWindowImg.src = ramenObj.image;
         ramenWindowImg.alt = ramenObj.name;
@@ -148,8 +136,10 @@ document.addEventListener('DOMContentLoaded', displayToWindow(1))
 // ! Submit functions
 const submitNewRamen = (e) => {
     const newRamenObj = handleSubmit(e);
+    if (newRamenObj) {
     postNewRamen(newRamenObj)
     .then(newRamenObj => ramenNav.appendChild(renderRamenNav(newRamenObj)))
+    } 
 };
 
 const validateFormData = (formInputArr) => {
