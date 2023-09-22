@@ -1,17 +1,3 @@
-// Populate all ramens from db into nav bar
-
-// Display a ramen and its details to window when clicked in nav bar
-
-// Create a new ramen to the nav bar when the form is submitted (no persistence)
-
-// Load details for first ramenNav in window on page load
-
-// Update the rating and comment for a ramen with the submit form (no persistence)
-
-// Persist updates to a ramen's rating and comment
-
-// ! Persist ramen deletions
-
 // ! Variables
 const RAMENURL = 'http://localhost:3000/ramens';
 
@@ -98,6 +84,7 @@ const deleteRamen = () => {
     })
     .then(resp => resp.json())
     .then(removeFromDom())
+    .then(displayToWindow(parseInt(currentlyDisplayedRamen + 1))) //TODO Spread into an array so next can be displayed
     .catch(error => alert('Failed to delete data.'))
 };
 
