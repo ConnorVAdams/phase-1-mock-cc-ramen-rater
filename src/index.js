@@ -55,18 +55,37 @@ const postNewRamen = (ramenObj) => {
     .catch(error => alert('Failed to fetch data.'))
 };
 
-const patchRamen = (requestedRamenId) => {
-    return fetch(`${RAMENURL}/${requestedRamenId}`, {
+const patchRamen = (e) => {
+    const patchData = handleUpdate(e)
+    return fetch(`${RAMENURL}/${currentlyDisplayedRamen}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({rating: ratingDisplay})
+        body: JSON.stringify(patchData)
     })
     .then(resp => console.log(resp.json()))
-
+    .catch(error => alert('Failed to submit data.'))
 };
 
+const handleUpdate = (e) => {
+    e.preventDefault();
+    const updatedRamenObj = {};
+    if (validateFormData([e.target.rating.value, e.target['new-comment'].value])) {
+        updatedRamenObj.rating = parseInt(e.target.rating.value);
+        updatedRamenObj.comment = e.target['new-comment'].value;
+        editForm.reset();
+        return updatedRamenObj;
+    } else if (validateFormData([e.target.rating.value])) {
+        updatedRamenObj.rating = parseInt(e.target.rating.value);
+        editForm.reset();
+        return updatedRamenObj;
+    } else {
+        updatedRamenObj.comment = e.target['new-comment'].value;
+        editForm.reset();
+        return updatedRamenObj;
+    }
+};
 
 editForm.addEventListener('submit', patchRamen)
 
@@ -141,8 +160,7 @@ const handleSubmit = (e) => {
     if (validateFormData([
         e.target.name.value, 
         e.target.restaurant.value, 
-        e.target.image.value, 
-        e.target.rating.value, 
+        e.target.image.value,  
         e.target.rating.value, 
         e.target['new-comment'].value])) {
     const newRamenObj = {}
