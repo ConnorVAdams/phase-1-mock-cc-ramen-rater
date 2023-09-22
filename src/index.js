@@ -22,16 +22,13 @@ const ramenWindowName = document.querySelector('.name');
 const ramenWindowRest = document.querySelector('.restaurant');
 
 const ratingDisplay = document.querySelector('#rating-display');
-const ratingBtnUp = document.querySelector("#rating-button-up");
-const ratingBtnDown = document.querySelector("#rating-button-down")
 const commentDisplay = document.querySelector('#comment-display');
-const commentBtn = document.querySelector("#edit-comment-button");
-
 
 const submitForm = document.querySelector('#new-ramen');
-    const submitBtn = document.querySelector("#new-ramen > input[type=submit]:nth-child(12)")
 
-let currentRamenId;
+const editForm = document.querySelector('#edit-ramen');
+
+let currentlyDisplayedRamen;
 
 // ! CRUD functions
 const getAllRamens = () => {
@@ -58,31 +55,24 @@ const postNewRamen = (ramenObj) => {
     .catch(error => alert('Failed to fetch data.'))
 };
 
-// const patchRamenRating = (requestedRamenId) => {
-//     return fetch(`${RAMENURL}/${requestedRamenId}`, {
-//         method: 'PATCH',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify({rating: ratingDisplay})
-//     })
-//     .then(resp => console.log(resp.json()))
+const patchRamen = (requestedRamenId) => {
+    return fetch(`${RAMENURL}/${requestedRamenId}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({rating: ratingDisplay})
+    })
+    .then(resp => console.log(resp.json()))
 
-// };
+};
 
-// const patchRamenComment = (requestedRamenId) => {
-//     return fetch(`${RAMENURL}/${requestedRamenId}`, {
-//         method: 'PATCH',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify()
-//     })
-// };
 
-const deleteRamen = (ramenId) => {
-    return fetch(RAMENURL)
-}
+editForm.addEventListener('submit', patchRamen)
+
+// const deleteRamen = (ramenId) => {
+//     return fetch(RAMENURL)
+// }
 
 // ! Render functions
 
@@ -116,6 +106,7 @@ const displayToWindowOnClick = (e) => {
         ramenWindowRest.textContent = ramenObj.restaurant;
         ratingDisplay.textContent = ramenObj.rating;
         commentDisplay.textContent = ramenObj.comment;
+        currentlyDisplayedRamen = ramenObj.id;
     })
 };
 
@@ -128,8 +119,9 @@ const displayToWindowOnLoad = (ramenId) => {
         ramenWindowRest.textContent = ramenObj.restaurant;
         ratingDisplay.textContent = ramenObj.rating;
         commentDisplay.textContent = ramenObj.comment;
+        currentlyDisplayedRamen = ramenObj.id;
     })
-}
+};
 
 document.addEventListener('DOMContentLoaded', displayToWindowOnLoad(1))
 
